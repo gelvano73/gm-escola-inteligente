@@ -2,7 +2,22 @@
 
 Sistema escolar completo para gestão acadêmica do **1º Ano do Ensino Fundamental** ao **3º Ano do Ensino Médio**.
 
-## Como testar (rápido)
+## Demo online
+
+Quando o deploy estiver ativo, use o link público do serviço (Railway/Render). Contas demo:
+
+| Perfil | Login | Senha |
+|--------|-------|-------|
+| Admin | `admin` | `123456` |
+| Professor | `professor` | `prof123` |
+| Aluno | `A2026001` | `12052011` |
+
+- Alunos: `/` ou `/boletim`
+- Equipe: `/admin`
+
+> No 1º acesso o sistema pede troca de senha.
+
+## Como testar localmente
 
 1. Clone o repositório:
    ```bash

@@ -1,4 +1,3 @@
-# Atualiza o Dockerfile antigo (compose local ainda pode usá-lo via contexto backend)
 FROM python:3.12-slim
 
 WORKDIR /app
@@ -6,12 +5,12 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends libpq5 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app ./app
-# No compose, o frontend é montado em /app/frontend
-COPY .env.example ./.env
+COPY backend/app ./app
+COPY frontend ./frontend
+COPY backend/.env.example ./.env
 
 ENV PYTHONPATH=/app
 ENV PORT=8000

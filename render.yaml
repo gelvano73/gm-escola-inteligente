@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: gm-escola-inteligente
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: DATABASE_URL
+        value: sqlite:///./escola.db
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "480"
+      - key: WHATSAPP_ENABLED
+        value: "false"
+      - key: OPENAI_ENABLED
+        value: "false"

@@ -1,0 +1,14 @@
+.venv
+backend/.venv
+**/__pycache__
+**/*.pyc
+**/.env
+backend/.env
+**/*.db
+backend/*.db
+.git
+.cursor
+pgdata
+uploads
+backend/uploads
+*.md
