@@ -1,4 +1,4 @@
-from app.routers import academico, acesso, alunos, auth, dashboard, escola, eventos, noticias, notas, ocorrencias, professores, relatorios, whatsapp
+from app.routers import academico, acesso, alunos, auth, dashboard, escola, eventos, lgpd, noticias, notas, ocorrencias, professores, relatorios, whatsapp
 
 __all__ = [
     "auth",

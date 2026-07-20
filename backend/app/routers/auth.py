@@ -9,6 +9,7 @@ from app.deps import get_current_user
 from app.models import Aluno, User
 from app.schemas import ChangePasswordRequest, LoginRequest, MeResponse, Token, UserOut
 from app.services.credenciais import normalizar_senha_nascimento, senha_inicial_aluno
+from app.services.logs import registrar_log
 
 router = APIRouter(prefix="/auth", tags=["Autenticação"])
 
@@ -59,6 +60,7 @@ def _authenticate(db: Session, login: str, password: str) -> User:
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = _authenticate(db, form_data.username, form_data.password)
     token = create_access_token({"sub": str(user.id), "role": user.role.value})
+    registrar_log(db, user.id, "login", f"perfil={user.role.value}")
     return Token(access_token=token, must_change_password=user.must_change_password)
 
 
@@ -66,6 +68,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 def login_json(payload: LoginRequest, db: Session = Depends(get_db)):
     user = _authenticate(db, payload.usuario, payload.password)
     token = create_access_token({"sub": str(user.id), "role": user.role.value})
+    registrar_log(db, user.id, "login", f"perfil={user.role.value}")
     return Token(access_token=token, must_change_password=user.must_change_password)
 
 

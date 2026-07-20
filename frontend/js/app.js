@@ -24,6 +24,7 @@ const menus = {
     { id: "noticias", label: "Notícias" },
     { id: "relatorios", label: "Relatórios" },
     { id: "acesso", label: "Controle de acesso" },
+    { id: "lgpd", label: "LGPD" },
     { id: "assistente", label: "Assistente WhatsApp" },
     { id: "configuracoes", label: "Configurações da Escola" },
   ],
@@ -353,10 +354,19 @@ async function viewAlunos() {
           <option value="">Sem turma</option>
           ${turmas.map((t) => `<option value="${t.id}">${t.serie?.nome || ""} ${t.nome} (${t.ano_letivo})</option>`).join("")}
         </select>
+        <label class="flex items-start gap-2 text-sm text-[rgba(11,31,42,0.8)]">
+          <input type="checkbox" name="lgpd_consentimento" value="true" required class="mt-1" />
+          <span>
+            Declaro que o responsável autorizou o tratamento dos dados do aluno conforme a
+            <a href="/pages/privacidade.html" target="_blank" rel="noopener">Política de Privacidade (LGPD)</a>.
+          </span>
+        </label>
+        <input class="input-field" name="lgpd_consentimento_por" placeholder="Nome de quem autorizou (responsável)" required />
         `,
         async (fd) => {
           const payload = Object.fromEntries(fd.entries());
           payload.turma_id = payload.turma_id ? Number(payload.turma_id) : null;
+          payload.lgpd_consentimento = fd.get("lgpd_consentimento") === "true";
           const res = await GMApi.api("/alunos", { method: "POST", body: payload });
           return {
             credenciais: {
@@ -1004,6 +1014,7 @@ const views = {
   noticias: viewNoticias,
   relatorios: viewRelatorios,
   acesso: viewAcesso,
+  lgpd: viewLgpd,
   assistente: viewAssistente,
   configuracoes: viewConfiguracoes,
 };
@@ -1261,6 +1272,106 @@ async function viewAssistente() {
   });
   document.querySelectorAll("[data-quick]").forEach((btn) => {
     btn.onclick = () => send(btn.dataset.quick);
+  });
+}
+
+async function viewLgpd() {
+  setMeta("LGPD", "Privacidade, consentimento e direitos do titular");
+  const [logs, alunos] = await Promise.all([
+    GMApi.api("/lgpd/logs?limit=80"),
+    GMApi.api("/alunos"),
+  ]);
+  const content = document.getElementById("content");
+  const comConsent = alunos.filter((a) => a.lgpd_consentimento).length;
+  content.innerHTML = `
+    <section class="panel p-4 text-sm text-[rgba(11,31,42,0.75)] space-y-2">
+      <p>Este painel apoia a conformidade com a <strong>Lei Geral de Proteção de Dados (LGPD)</strong>.</p>
+      <p>
+        Documentos:
+        <a class="text-[var(--sea)] font-semibold" href="/pages/privacidade.html" target="_blank">Política de Privacidade</a>
+        ·
+        <a class="text-[var(--sea)] font-semibold" href="/pages/termos.html" target="_blank">Termos de Uso</a>
+      </p>
+      <div class="flex flex-wrap gap-2 mt-2">
+        <button class="btn-primary" id="btn-exportar-meus">Exportar meus dados</button>
+      </div>
+    </section>
+    <section class="stats-grid mt-4">
+      ${cardStat("Alunos com consentimento", `${comConsent}/${alunos.length}`)}
+      ${cardStat("Eventos de auditoria", logs.length)}
+    </section>
+    <section class="panel p-4 mt-4">
+      <h3 class="font-display text-xl mb-3">Consentimento nos cadastros</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Aluno</th><th>Consentimento</th><th>Autorizado por</th><th>Data</th><th></th></tr></thead>
+          <tbody>
+            ${alunos
+              .map(
+                (a) => `<tr>
+                <td>${a.user.nome}<div class="text-xs text-[rgba(11,31,42,0.55)]">${a.matricula}</div></td>
+                <td><span class="badge ${a.lgpd_consentimento ? "success" : "warning"}">${a.lgpd_consentimento ? "Sim" : "Pendente"}</span></td>
+                <td>${a.lgpd_consentimento_por || "—"}</td>
+                <td>${a.lgpd_consentimento_em ? fmtDateTime(a.lgpd_consentimento_em) : "—"}</td>
+                <td><button class="btn-ghost" data-anon="${a.user.id}" data-nome="${a.user.nome}">Anonimizar</button></td>
+              </tr>`
+              )
+              .join("") || `<tr><td colspan="5">Nenhum aluno.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section class="panel p-4 mt-4">
+      <h3 class="font-display text-xl mb-3">Trilha de auditoria</h3>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Quando</th><th>Usuário</th><th>Ação</th><th>Detalhe</th></tr></thead>
+          <tbody>
+            ${logs
+              .map(
+                (l) => `<tr>
+                <td>${fmtDateTime(l.criado_em)}</td>
+                <td>#${l.user_id ?? "—"}</td>
+                <td>${l.acao}</td>
+                <td>${l.detalhe || "—"}</td>
+              </tr>`
+              )
+              .join("") || `<tr><td colspan="4">Sem registros.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </section>`;
+
+  document.getElementById("btn-exportar-meus").onclick = async () => {
+    try {
+      const dados = await GMApi.api("/lgpd/meus-dados");
+      const blob = new Blob([JSON.stringify(dados, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `meus-dados-lgpd-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast("Arquivo gerado");
+    } catch (err) {
+      toast(err.message);
+    }
+  };
+
+  document.querySelectorAll("[data-anon]").forEach((btn) => {
+    btn.onclick = async () => {
+      if (!confirm(`Anonimizar dados de "${btn.dataset.nome}"? Esta ação não pode ser desfeita.`)) return;
+      try {
+        await GMApi.api(`/lgpd/anonimizar/${btn.dataset.anon}`, {
+          method: "POST",
+          body: { motivo: "Solicitação LGPD / administração" },
+        });
+        toast("Dados anonimizados");
+        await renderView("lgpd");
+      } catch (err) {
+        toast(err.message);
+      }
+    };
   });
 }
 

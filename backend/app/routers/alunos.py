@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session, joinedload
 
@@ -58,6 +60,18 @@ def criar_aluno(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles(UserRole.ADMIN)),
 ):
+    if not payload.lgpd_consentimento:
+        raise HTTPException(
+            status_code=400,
+            detail="É obrigatório o consentimento LGPD do responsável para cadastrar o aluno.",
+        )
+    consent_por = (payload.lgpd_consentimento_por or payload.responsavel_nome or "").strip()
+    if not consent_por:
+        raise HTTPException(
+            status_code=400,
+            detail="Informe o nome de quem autorizou o tratamento dos dados (responsável).",
+        )
+
     username = (payload.username or payload.matricula).strip()
     if db.query(User).filter(User.email == payload.email).first():
         raise HTTPException(status_code=400, detail="E-mail já cadastrado")
@@ -84,6 +98,9 @@ def criar_aluno(
         responsavel_nome=payload.responsavel_nome,
         responsavel_telefone=payload.responsavel_telefone,
         turma_id=payload.turma_id,
+        lgpd_consentimento=True,
+        lgpd_consentimento_em=datetime.utcnow(),
+        lgpd_consentimento_por=consent_por,
     )
     db.add(aluno)
     db.flush()

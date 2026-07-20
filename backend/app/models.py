@@ -126,6 +126,10 @@ class Aluno(Base):
     responsavel_telefone: Mapped[str | None] = mapped_column(String(30))
     responsavel_cpf: Mapped[str | None] = mapped_column(String(14))
     turma_id: Mapped[int | None] = mapped_column(ForeignKey("turmas.id"))
+    # LGPD — consentimento do responsável para tratamento de dados do menor
+    lgpd_consentimento: Mapped[bool] = mapped_column(Boolean, default=False)
+    lgpd_consentimento_em: Mapped[datetime | None] = mapped_column(DateTime)
+    lgpd_consentimento_por: Mapped[str | None] = mapped_column(String(200))
 
     user: Mapped["User"] = relationship(back_populates="aluno")
     turma: Mapped["Turma | None"] = relationship(back_populates="alunos")

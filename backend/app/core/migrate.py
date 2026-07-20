@@ -45,9 +45,15 @@ def ensure_schema_upgrades() -> bool:
     inspector = inspect(engine)
     if "alunos" in inspector.get_table_names():
         cols = {c["name"] for c in inspector.get_columns("alunos")}
-        if "responsavel_cpf" not in cols:
-            with engine.begin() as conn:
+        with engine.begin() as conn:
+            if "responsavel_cpf" not in cols:
                 conn.execute(text("ALTER TABLE alunos ADD COLUMN responsavel_cpf VARCHAR(14)"))
+            if "lgpd_consentimento" not in cols:
+                conn.execute(text("ALTER TABLE alunos ADD COLUMN lgpd_consentimento BOOLEAN DEFAULT 0"))
+            if "lgpd_consentimento_em" not in cols:
+                conn.execute(text("ALTER TABLE alunos ADD COLUMN lgpd_consentimento_em DATETIME"))
+            if "lgpd_consentimento_por" not in cols:
+                conn.execute(text("ALTER TABLE alunos ADD COLUMN lgpd_consentimento_por VARCHAR(200)"))
     return dropped
 
 

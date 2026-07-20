@@ -181,6 +181,16 @@
   text-decoration: underline;
 }
 
+.boletim-lgpd-links {
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+}
+
+.boletim-lgpd-links a {
+  color: #1e5a8a;
+  font-weight: 600;
+}
+
 .boletim-staff-link a,
 .boletim-demo {
   color: #1e4f7a;

@@ -332,6 +332,42 @@ async function viewRenovacaoMatricula() {
   });
 }
 
+async function viewPrivacidade() {
+  const root = document.getElementById("aluno-content");
+  root.innerHTML = `
+    <h2 class="boletim-section-title">Privacidade (LGPD)</h2>
+    <div class="boletim-card" style="padding:1rem;margin-bottom:1rem">
+      <p style="margin:0 0 0.75rem;color:#445">
+        Você pode acessar e exportar seus dados pessoais, conforme a Lei Geral de Proteção de Dados.
+      </p>
+      <p style="margin:0 0 1rem">
+        <a href="/pages/privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>
+        ·
+        <a href="/pages/termos.html" target="_blank" rel="noopener">Termos de Uso</a>
+      </p>
+      <button type="button" class="boletim-btn-entrar" id="btn-exportar-dados" style="width:auto;padding:0.65rem 1.2rem">
+        Exportar meus dados
+      </button>
+      <p style="margin:1rem 0 0;font-size:0.9rem;color:#667">
+        Para correção ou exclusão/anonimização, procure a administração da escola.
+      </p>
+    </div>`;
+  document.getElementById("btn-exportar-dados").onclick = async () => {
+    try {
+      const dados = await GMApi.api("/lgpd/meus-dados");
+      const blob = new Blob([JSON.stringify(dados, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `meus-dados-lgpd-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+}
+
 const views = {
   boletim: viewBoletim,
   eventos: viewEventos,
@@ -341,6 +377,7 @@ const views = {
   "avaliacao-especial": viewAvaliacaoEspecial,
   "segunda-chamada": viewSegundaChamada,
   "renovacao-matricula": viewRenovacaoMatricula,
+  privacidade: viewPrivacidade,
 };
 
 async function renderView(viewId) {

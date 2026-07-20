@@ -93,6 +93,8 @@ class AlunoCreate(BaseModel):
     responsavel_telefone: str | None = None
     turma_id: int | None = None
     username: str | None = None
+    lgpd_consentimento: bool = False
+    lgpd_consentimento_por: str | None = None
 
 
 class AlunoUpdate(BaseModel):
@@ -113,6 +115,9 @@ class AlunoOut(BaseModel):
     responsavel_nome: str | None
     responsavel_telefone: str | None
     turma_id: int | None
+    lgpd_consentimento: bool = False
+    lgpd_consentimento_em: datetime | None = None
+    lgpd_consentimento_por: str | None = None
     user: UserOut
     turma: TurmaOut | None = None
 

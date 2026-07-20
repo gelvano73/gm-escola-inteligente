@@ -49,6 +49,11 @@
       <footer class="boletim-login-footer">
         <p class="boletim-forgot">Esqueceu a senha? Entre em contato com a administração da escola para receber uma nova senha provisória.</p>
         <a href="/pages/change-password.html" id="link-alterar-senha">Alterar senha</a>
+        <p class="boletim-lgpd-links">
+          <a href="/pages/privacidade.html">Política de Privacidade</a>
+          ·
+          <a href="/pages/termos.html">Termos de Uso</a>
+        </p>
       </footer>
     </div>
 
@@ -59,6 +64,14 @@
       <p><strong>Demo aluno:</strong> A2026001 / 12052011</p>
     </div>
   </main>
+
+  <div id="lgpd-banner" class="lgpd-banner hidden" role="dialog" aria-label="Aviso de privacidade">
+    <p>
+      Usamos dados pessoais para fins educacionais, conforme a
+      <a href="/pages/privacidade.html">LGPD</a>. Ao continuar, você declara ciência.
+    </p>
+    <button type="button" id="lgpd-aceitar" class="btn-primary">Continuar</button>
+  </div>
 
   <script src="/js/api.js"></script>
   <script src="/js/auth.js"></script>
@@ -141,6 +154,16 @@
         genCaptcha();
       }
     });
+
+    (function lgpdBanner() {
+      if (localStorage.getItem("gm_lgpd_ok")) return;
+      const banner = document.getElementById("lgpd-banner");
+      banner.classList.remove("hidden");
+      document.getElementById("lgpd-aceitar").onclick = () => {
+        localStorage.setItem("gm_lgpd_ok", "1");
+        banner.classList.add("hidden");
+      };
+    })();
   </script>
 </body>
 </html>

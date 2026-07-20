@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from app.core.config import get_settings
 from app.core.database import SessionLocal
 from app.core.migrate import ensure_schema_upgrades
-from app.routers import academico, acesso, alunos, auth, dashboard, escola, eventos, noticias, notas, ocorrencias, professores, relatorios, whatsapp
+from app.routers import academico, acesso, alunos, auth, dashboard, escola, eventos, lgpd, noticias, notas, ocorrencias, professores, relatorios, whatsapp
 from app.seed import seed_database
 
 settings = get_settings()
@@ -60,6 +60,7 @@ app.include_router(acesso.router, prefix="/api")
 app.include_router(relatorios.router, prefix="/api")
 app.include_router(escola.router, prefix="/api")
 app.include_router(whatsapp.router, prefix="/api")
+app.include_router(lgpd.router, prefix="/api")
 
 
 @app.get("/api/health")
