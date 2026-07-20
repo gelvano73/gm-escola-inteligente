@@ -70,6 +70,10 @@ class User(Base):
     role: Mapped[UserRole] = mapped_column(Enum(UserRole), nullable=False, index=True)
     ativo: Mapped[bool] = mapped_column(Boolean, default=True)
     must_change_password: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Aceite de Termos de Uso + Política de Privacidade (LGPD) no login
+    termos_aceitos: Mapped[bool] = mapped_column(Boolean, default=False)
+    termos_aceitos_em: Mapped[datetime | None] = mapped_column(DateTime)
+    termos_versao: Mapped[str | None] = mapped_column(String(20))
     criado_em: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     professor: Mapped["Professor | None"] = relationship(back_populates="user", uselist=False)

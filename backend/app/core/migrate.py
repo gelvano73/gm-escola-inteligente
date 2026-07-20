@@ -54,6 +54,15 @@ def ensure_schema_upgrades() -> bool:
                 conn.execute(text("ALTER TABLE alunos ADD COLUMN lgpd_consentimento_em DATETIME"))
             if "lgpd_consentimento_por" not in cols:
                 conn.execute(text("ALTER TABLE alunos ADD COLUMN lgpd_consentimento_por VARCHAR(200)"))
+    if "users" in inspector.get_table_names():
+        ucols = {c["name"] for c in inspector.get_columns("users")}
+        with engine.begin() as conn:
+            if "termos_aceitos" not in ucols:
+                conn.execute(text("ALTER TABLE users ADD COLUMN termos_aceitos BOOLEAN DEFAULT 0"))
+            if "termos_aceitos_em" not in ucols:
+                conn.execute(text("ALTER TABLE users ADD COLUMN termos_aceitos_em DATETIME"))
+            if "termos_versao" not in ucols:
+                conn.execute(text("ALTER TABLE users ADD COLUMN termos_versao VARCHAR(20)"))
     return dropped
 
 

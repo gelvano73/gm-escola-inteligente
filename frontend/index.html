@@ -39,6 +39,21 @@
             <button type="button" id="captcha-box" class="boletim-captcha-code" title="Clique para atualizar"></button>
           </div>
         </div>
+        <label class="boletim-aceite">
+          <input type="checkbox" id="aceite-termos" required />
+          <span>
+            Li e aceito os
+            <a href="/pages/termos.html" target="_blank" rel="noopener">Termos de Uso</a>.
+          </span>
+        </label>
+        <label class="boletim-aceite">
+          <input type="checkbox" id="aceite-privacidade" required />
+          <span>
+            Li e aceito a
+            <a href="/pages/privacidade.html" target="_blank" rel="noopener">Política de Privacidade (LGPD)</a>
+            e autorizo o tratamento dos dados para fins educacionais.
+          </span>
+        </label>
         <p id="login-error" class="boletim-error hidden"></p>
         <button class="boletim-btn-entrar" type="submit">
           <span class="boletim-btn-arrow" aria-hidden="true">→</span>
@@ -64,14 +79,6 @@
       <p><strong>Demo aluno:</strong> A2026001 / 12052011</p>
     </div>
   </main>
-
-  <div id="lgpd-banner" class="lgpd-banner hidden" role="dialog" aria-label="Aviso de privacidade">
-    <p>
-      Usamos dados pessoais para fins educacionais, conforme a
-      <a href="/pages/privacidade.html">LGPD</a>. Ao continuar, você declara ciência.
-    </p>
-    <button type="button" id="lgpd-aceitar" class="btn-primary">Continuar</button>
-  </div>
 
   <script src="/js/api.js"></script>
   <script src="/js/auth.js"></script>
@@ -128,6 +135,13 @@
       event.preventDefault();
       const errorEl = document.getElementById("login-error");
       errorEl.classList.add("hidden");
+      const aceiteTermos = document.getElementById("aceite-termos").checked;
+      const aceitePrivacidade = document.getElementById("aceite-privacidade").checked;
+      if (!aceiteTermos || !aceitePrivacidade) {
+        errorEl.textContent = "Aceite os Termos de Uso e a Política de Privacidade (LGPD) para continuar.";
+        errorEl.classList.remove("hidden");
+        return;
+      }
       const typed = document.getElementById("captcha").value.trim().toUpperCase();
       if (typed !== captchaCode) {
         errorEl.textContent = "Caracteres incorretos. Tente novamente.";
@@ -138,7 +152,8 @@
       try {
         const me = await Auth.login(
           document.getElementById("usuario").value.trim(),
-          document.getElementById("password").value
+          document.getElementById("password").value,
+          { aceite_termos: true, aceite_privacidade: true }
         );
         if (me.perfil !== "aluno") {
           Auth.clear();
@@ -154,16 +169,6 @@
         genCaptcha();
       }
     });
-
-    (function lgpdBanner() {
-      if (localStorage.getItem("gm_lgpd_ok")) return;
-      const banner = document.getElementById("lgpd-banner");
-      banner.classList.remove("hidden");
-      document.getElementById("lgpd-aceitar").onclick = () => {
-        localStorage.setItem("gm_lgpd_ok", "1");
-        banner.classList.add("hidden");
-      };
-    })();
   </script>
 </body>
 </html>

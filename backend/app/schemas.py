@@ -16,6 +16,8 @@ class Token(BaseModel):
 class LoginRequest(BaseModel):
     usuario: str = Field(min_length=1, description="Username ou e-mail")
     password: str
+    aceite_termos: bool = False
+    aceite_privacidade: bool = False
 
 
 class ChangePasswordRequest(BaseModel):
@@ -48,6 +50,8 @@ class UserOut(UserBase):
     id: int
     ativo: bool
     must_change_password: bool
+    termos_aceitos: bool = False
+    termos_versao: str | None = None
     criado_em: datetime
 
 
@@ -216,6 +220,9 @@ class MeResponse(BaseModel):
     matricula: str | None = None
     data_nascimento: str | None = None
     turma_nome: str | None = None
+    termos_aceitos: bool = False
+    termos_versao: str | None = None
+    termos_versao_atual: str = "2026-07"
 
 
 class DisciplinaCreate(BaseModel):

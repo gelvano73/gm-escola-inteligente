@@ -1,8 +1,11 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import or_
 from sqlalchemy.orm import Session, joinedload
 
+from app.core.compliance import TERMOS_VERSAO
 from app.core.database import get_db
 from app.core.security import create_access_token, get_password_hash, verify_password
 from app.deps import get_current_user
@@ -39,7 +42,6 @@ def _find_user_by_login(db: Session, login: str) -> User | None:
 def _password_matches(user: User, password: str) -> bool:
     if verify_password(password, user.hashed_password):
         return True
-    # Aluno no 1º acesso pode digitar a data em formatos comuns
     if user.role.value == "aluno" and user.aluno and user.aluno.data_nascimento and user.must_change_password:
         normalizada = normalizar_senha_nascimento(password)
         if normalizada and verify_password(normalizada, user.hashed_password):
@@ -56,19 +58,39 @@ def _authenticate(db: Session, login: str, password: str) -> User:
     return user
 
 
+def _registrar_aceite_termos(db: Session, user: User) -> None:
+    user.termos_aceitos = True
+    user.termos_aceitos_em = datetime.utcnow()
+    user.termos_versao = TERMOS_VERSAO
+    db.add(user)
+    db.commit()
+    registrar_log(db, user.id, "aceite_termos_lgpd", f"versao={TERMOS_VERSAO}")
+
+
+def _exigir_aceite(aceite_termos: bool, aceite_privacidade: bool) -> None:
+    if not aceite_termos or not aceite_privacidade:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Para entrar, aceite os Termos de Uso e a Política de Privacidade (LGPD).",
+        )
+
+
 @router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    """Login form (Swagger). Aceite deve ser feito pelo login-json da interface."""
     user = _authenticate(db, form_data.username, form_data.password)
     token = create_access_token({"sub": str(user.id), "role": user.role.value})
-    registrar_log(db, user.id, "login", f"perfil={user.role.value}")
+    registrar_log(db, user.id, "login", f"perfil={user.role.value};canal=form")
     return Token(access_token=token, must_change_password=user.must_change_password)
 
 
 @router.post("/login-json", response_model=Token)
 def login_json(payload: LoginRequest, db: Session = Depends(get_db)):
+    _exigir_aceite(payload.aceite_termos, payload.aceite_privacidade)
     user = _authenticate(db, payload.usuario, payload.password)
+    _registrar_aceite_termos(db, user)
     token = create_access_token({"sub": str(user.id), "role": user.role.value})
-    registrar_log(db, user.id, "login", f"perfil={user.role.value}")
+    registrar_log(db, user.id, "login", f"perfil={user.role.value};aceite={TERMOS_VERSAO}")
     return Token(access_token=token, must_change_password=user.must_change_password)
 
 
@@ -95,6 +117,9 @@ def me(current_user: User = Depends(get_current_user), db: Session = Depends(get
         matricula=user.aluno.matricula if user.aluno else (user.professor.matricula if user.professor else None),
         data_nascimento=user.aluno.data_nascimento.isoformat() if user.aluno and user.aluno.data_nascimento else None,
         turma_nome=turma_nome,
+        termos_aceitos=bool(user.termos_aceitos),
+        termos_versao=user.termos_versao,
+        termos_versao_atual=TERMOS_VERSAO,
     )
 
 

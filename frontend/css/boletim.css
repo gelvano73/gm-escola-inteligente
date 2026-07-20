@@ -191,6 +191,28 @@
   font-weight: 600;
 }
 
+.boletim-aceite {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin: 0.35rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: rgba(11, 31, 42, 0.8);
+  text-align: left;
+}
+
+.boletim-aceite input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.boletim-aceite a {
+  color: #1e5a8a;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
 .boletim-staff-link a,
 .boletim-demo {
   color: #1e4f7a;

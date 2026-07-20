@@ -34,10 +34,15 @@ const Auth = {
     return true;
   },
 
-  async login(usuario, password) {
+  async login(usuario, password, opts = {}) {
     const tokenData = await GMApi.api("/auth/login-json", {
       method: "POST",
-      body: { usuario, password },
+      body: {
+        usuario,
+        password,
+        aceite_termos: Boolean(opts.aceite_termos),
+        aceite_privacidade: Boolean(opts.aceite_privacidade),
+      },
       auth: false,
     });
     const me = await fetch(`${GMApi.API_BASE}/auth/me`, {
