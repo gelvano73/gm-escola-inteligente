@@ -24,6 +24,8 @@ Contas demo:
 
 Código no GitHub: https://github.com/gelvano73/gm-escola-inteligente
 
+**Deploy automático:** cada `push` na branch `main` atualiza o site no Railway.
+
 ## Como testar localmente
 
 1. Clone o repositório:
