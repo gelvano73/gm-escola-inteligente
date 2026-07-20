@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notas Escolares</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/boletim.css" />
+</head>
+<body class="boletim-portal-body">
+  <header class="boletim-topbar">
+    <div class="boletim-topbar-inner">
+      <div class="boletim-topbar-head">
+        <p id="escola-nome" class="boletim-escola-nome">Escola</p>
+        <button type="button" id="menu-toggle" class="boletim-menu-toggle" aria-expanded="false" aria-controls="aluno-menu">
+          Menu
+        </button>
+      </div>
+      <nav id="aluno-menu" class="boletim-icon-menu" aria-label="Menu do aluno">
+        <button type="button" class="boletim-icon-btn active" data-view="boletim" title="Boletim">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6"/></svg>
+          <span>Boletim</span>
+        </button>
+        <button type="button" class="boletim-icon-btn" data-view="eventos" title="Eventos">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+          <span>Eventos</span>
+        </button>
+        <button type="button" class="boletim-icon-btn" data-view="ocorrencias" title="Ocorrências">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h6l2 2v12H7V7z"/><path d="M9 3v2M15 3v2M9 12h6M9 16h4"/></svg>
+          <span>Ocorrências</span>
+        </button>
+        <button type="button" class="boletim-icon-btn" data-view="noticias" title="Notícias">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h12v14H4z"/><path d="M16 9h4v10H8"/><path d="M7 9h6M7 13h6M7 17h4"/></svg>
+          <span>Notícias</span>
+        </button>
+        <button type="button" class="boletim-icon-btn" data-view="transferencias" title="Transferências">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h10"/><path d="M11 5l3 3-3 3"/><path d="M20 16H10"/><path d="M13 13l-3 3 3 3"/><rect x="3" y="14" width="5" height="6" rx="1"/><rect x="16" y="4" width="5" height="6" rx="1"/></svg>
+          <span>Transferências</span>
+        </button>
+        <button type="button" class="boletim-icon-btn" data-view="avaliacao-especial" title="Avaliação Especial">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="1.5"/><path d="M9 2.5h6v2H9z"/><path d="M9 10h6M9 14h6M9 18h4"/><path d="M15 16l3 5"/></svg>
+          <span>Avaliação Especial</span>
+        </button>
+        <button type="button" class="boletim-icon-btn" data-view="segunda-chamada" title="Segunda Chamada">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7l5 4.5V18h-3.5v-3.5h-3V18H7v-6.5z"/></svg>
+          <span>Segunda Chamada</span>
+        </button>
+        <button type="button" class="boletim-icon-btn" data-view="renovacao-matricula" title="Renovação de Matrícula">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="11" height="18" rx="1.5"/><rect x="7" y="5" width="4" height="4" rx="0.5"/><path d="M13 6h2M13 9h2M7 12h7M7 15h5"/><path d="M18 5v14l1.5-1.2L21 19V5z"/></svg>
+          <span>Renovação Matrícula</span>
+        </button>
+        <button type="button" class="boletim-icon-btn" id="btn-sair" title="Sair">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4"/><path d="M15 12H8M15 12l-3-3M15 12l-3 3"/></svg>
+          <span>Sair</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="aluno-content" class="boletim-main">
+    <p class="boletim-loading">Carregando...</p>
+  </main>
+
+  <div id="wa-assistente" class="wa-widget">
+    <div id="wa-panel" class="wa-panel hidden" aria-hidden="true">
+      <header class="wa-panel-header">
+        <div class="wa-panel-avatar" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="#fff"><path d="M12 2a10 10 0 0 0-8.7 14.9L2 22l5.3-1.4A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3.1.8.8-3-.2-.3A8 8 0 1 1 12 20z"/><path d="M17 14.2c-.3-.1-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.8 1-.3.2-.6.1a6.6 6.6 0 0 1-3.1-2.7c-.2-.4.2-.4.6-1.3.1-.2 0-.3 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3s-1 1-1 2.4 1 2.8 1.2 3a8.7 8.7 0 0 0 3.4 3.3c1.3.6 1.8.6 2.4.5.4-.1 1.2-.5 1.4-1s.2-.9.1-1-.2-.2-.5-.3z"/></svg>
+        </div>
+        <div class="wa-panel-title">
+          <strong>Assistente Escolar</strong>
+          <span>WhatsApp · online</span>
+        </div>
+        <button type="button" id="wa-close" class="wa-close" aria-label="Fechar chat">×</button>
+      </header>
+      <div id="wa-messages" class="wa-messages"></div>
+      <div class="wa-quick">
+        <button type="button" data-wa-q="Qual minha média em Matemática?">Média</button>
+        <button type="button" data-wa-q="Tenho alguma ocorrência?">Ocorrências</button>
+        <button type="button" data-wa-q="Quais eventos da escola estão cadastrados?">Eventos</button>
+        <button type="button" data-wa-q="Estou aprovado ou em recuperação?">Situação</button>
+      </div>
+      <form id="wa-form" class="wa-form">
+        <input id="wa-input" type="text" placeholder="Digite sua pergunta..." maxlength="2000" autocomplete="off" />
+        <button type="submit" aria-label="Enviar">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </form>
+    </div>
+    <button type="button" id="wa-fab" class="wa-fab" aria-label="Abrir assistente WhatsApp" title="Assistente WhatsApp">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="#fff"><path d="M12 2a10 10 0 0 0-8.7 14.9L2 22l5.3-1.4A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3.1.8.8-3-.2-.3A8 8 0 1 1 12 20z"/><path d="M17 14.2c-.3-.1-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.8 1-.3.2-.6.1a6.6 6.6 0 0 1-3.1-2.7c-.2-.4.2-.4.6-1.3.1-.2 0-.3 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3s-1 1-1 2.4 1 2.8 1.2 3a8.7 8.7 0 0 0 3.4 3.3c1.3.6 1.8.6 2.4.5.4-.1 1.2-.5 1.4-1s.2-.9.1-1-.2-.2-.5-.3z"/></svg>
+    </button>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/branding.js"></script>
+  <script src="/js/aluno.js"></script>
+</body>
+</html>

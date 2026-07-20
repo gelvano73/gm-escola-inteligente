@@ -1,0 +1,898 @@
+/* Login Boletim Escolar */
+.boletim-login-body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  background: linear-gradient(180deg, #4a7eb5 0%, #4a7eb5 46%, #ffffff 46%, #ffffff 100%);
+}
+
+.boletim-login-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+.boletim-login-card {
+  width: 100%;
+  max-width: 360px;
+  background: #fff;
+  border: 1px solid #c5d3e0;
+  box-shadow: 0 8px 24px rgba(20, 50, 80, 0.18);
+}
+
+.boletim-login-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #1e4f7a 0%, #2b6a9e 55%, #1e4f7a 100%);
+  color: #fff;
+  padding: 0.85rem 1rem;
+}
+
+.boletim-login-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  font-weight: 700;
+  color: #1e4f7a;
+  font-size: 0.75rem;
+}
+
+.boletim-login-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.boletim-login-header h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.boletim-login-form {
+  padding: 0.25rem 0 0.5rem;
+}
+
+.boletim-field {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #dde3ea;
+}
+
+.boletim-field input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  color: #1a2b3c;
+}
+
+.boletim-field-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+}
+
+.boletim-captcha {
+  padding: 0.9rem 1rem 0.4rem;
+}
+
+.boletim-captcha label {
+  display: block;
+  font-size: 0.92rem;
+  color: #334;
+  margin-bottom: 0.45rem;
+}
+
+.boletim-captcha-row {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.boletim-captcha-row input {
+  width: 7rem;
+  border: 1px solid #b8c5d4;
+  padding: 0.4rem 0.5rem;
+  font-size: 1rem;
+  outline: none;
+}
+
+.boletim-captcha-code {
+  min-width: 5.5rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #2b6a9e;
+  background: #fff;
+  color: #5a9fd4;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+
+.boletim-error {
+  color: #b42318;
+  font-size: 0.88rem;
+  padding: 0.4rem 1rem 0;
+}
+
+.boletim-error.hidden {
+  display: none;
+}
+
+.boletim-btn-entrar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.85rem 1rem 0.5rem;
+  background: transparent;
+  border: none;
+  color: #1a2b3c;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.35rem 0;
+}
+
+.boletim-btn-entrar:hover {
+  color: #1e4f7a;
+}
+
+.boletim-btn-arrow {
+  color: #6b7785;
+  font-size: 1.1rem;
+}
+
+.boletim-login-footer {
+  border-top: 1px solid #dde3ea;
+  padding: 0.75rem 1rem;
+  text-align: right;
+}
+
+.boletim-forgot {
+  margin: 0 0 0.55rem;
+  text-align: left;
+  font-size: 0.82rem;
+  color: #445;
+  line-height: 1.35;
+}
+
+.boletim-login-footer a {
+  color: #1e4f7a;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.boletim-login-footer a:hover {
+  text-decoration: underline;
+}
+
+.boletim-staff-link a,
+.boletim-demo {
+  color: #1e4f7a;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.boletim-demo {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #c5d3e0;
+  padding: 0.75rem 1rem;
+  max-width: 360px;
+  width: 100%;
+}
+
+.boletim-demo.hidden {
+  display: none;
+}
+
+.boletim-demo p {
+  margin: 0.2rem 0;
+  color: #334;
+}
+
+/* Portal do aluno */
+.boletim-portal-body {
+  margin: 0;
+  min-height: 100vh;
+  background: #f4f6f8;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  color: #1a2b3c;
+}
+
+.boletim-topbar {
+  background: #1e4f7a;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.boletim-topbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.65rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  flex-wrap: wrap;
+}
+
+.boletim-topbar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.boletim-escola-nome {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.boletim-menu-toggle {
+  display: none;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-radius: 0.45rem;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.boletim-icon-menu {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  max-width: 100%;
+}
+
+.boletim-icon-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.3rem;
+  width: 5.5rem;
+  min-height: 4.1rem;
+  padding: 0.4rem 0.25rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.boletim-icon-btn svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.boletim-icon-btn span {
+  display: block;
+  width: 100%;
+  max-height: 2.1em;
+  overflow: hidden;
+}
+
+.boletim-icon-btn:hover,
+.boletim-icon-btn.active {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.boletim-steps {
+  margin: 0.4rem 0 0;
+  padding-left: 1.15rem;
+  color: #445;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.boletim-servico-note {
+  margin-top: 0.5rem !important;
+  font-size: 0.82rem !important;
+  color: #1e4f7a !important;
+  font-weight: 600;
+}
+
+.boletim-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.boletim-loading {
+  padding: 2rem;
+  text-align: center;
+  color: #667;
+}
+
+.boletim-info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.boletim-card {
+  background: #fff;
+  border: 1px solid #cfd8e3;
+  overflow: hidden;
+}
+
+.boletim-card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.boletim-card th,
+.boletim-card td {
+  border: 1px solid #cfd8e3;
+  padding: 0.4rem 0.55rem;
+  text-align: left;
+  word-break: break-word;
+}
+
+.boletim-card th {
+  background: #eef2f6;
+  font-weight: 700;
+  white-space: nowrap;
+  width: 28%;
+}
+
+.criterio-title {
+  background: #eef2f6;
+  font-weight: 700;
+  text-align: center;
+  padding: 0.45rem;
+  border-bottom: 1px solid #cfd8e3;
+  font-size: 0.85rem;
+}
+
+.boletim-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0;
+  border-bottom: 1px solid #cfd8e3;
+  background: #fff;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.boletim-tab {
+  border: 1px solid #cfd8e3;
+  border-bottom: none;
+  background: #fff;
+  padding: 0.55rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1e4f7a;
+  cursor: pointer;
+  margin-right: -1px;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.boletim-tab.active {
+  background: #d8dee6;
+  color: #1a2b3c;
+}
+
+.boletim-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+  border: 1px solid #cfd8e3;
+  border-top: none;
+}
+
+.boletim-grades {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  min-width: 640px;
+}
+
+.boletim-grades th,
+.boletim-grades td {
+  border: 1px solid #cfd8e3;
+  padding: 0.35rem 0.4rem;
+  text-align: center;
+}
+
+.boletim-grades thead th {
+  background: #eef2f6;
+  font-weight: 700;
+}
+
+.boletim-grades td.disc {
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.boletim-grades td.nota-final {
+  color: #1f7a3a;
+  font-weight: 700;
+}
+
+.boletim-grades tr.group-sep td {
+  background: #f7f9fb;
+}
+
+.boletim-section-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e4f7a;
+}
+
+.boletim-list {
+  background: #fff;
+  border: 1px solid #cfd8e3;
+}
+
+.boletim-list-item {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #e4eaf0;
+}
+
+.boletim-list-item:last-child {
+  border-bottom: none;
+}
+
+.boletim-list-item h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+}
+
+.boletim-list-item p {
+  margin: 0.15rem 0;
+  font-size: 0.9rem;
+  color: #445;
+}
+
+.boletim-empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: #667;
+  background: #fff;
+  border: 1px solid #cfd8e3;
+}
+
+.badge-sit {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.badge-sit.ok {
+  background: #e3f6ea;
+  color: #1f7a3a;
+}
+
+.badge-sit.warn {
+  background: #fff4d6;
+  color: #9a6700;
+}
+
+.badge-sit.bad {
+  background: #fde8e8;
+  color: #b42318;
+}
+
+.boletim-scroll-hint {
+  display: none;
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  color: #667;
+}
+
+/* Tablet e smartphone: menu compacto (desktop ≥1024 fica igual) */
+@media (max-width: 1023px) {
+  .boletim-topbar-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.45rem;
+    padding: 0.55rem 0.75rem;
+  }
+
+  .boletim-topbar-head {
+    width: 100%;
+  }
+
+  .boletim-escola-nome {
+    font-size: 0.95rem;
+    flex-basis: auto;
+    width: auto;
+    max-width: none;
+  }
+
+  .boletim-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .boletim-icon-menu {
+    display: none;
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 0.2rem;
+    padding: 0.2rem 0 0.35rem;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .boletim-icon-menu.is-open {
+    display: flex;
+  }
+
+  .boletim-icon-btn {
+    width: auto;
+    min-width: 3.35rem;
+    min-height: 2.85rem;
+    padding: 0.35rem 0.4rem;
+    justify-content: center;
+    gap: 0.15rem;
+    font-size: 0.55rem;
+    flex: 0 0 auto;
+  }
+
+  .boletim-icon-btn svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .boletim-icon-btn span {
+    display: block;
+    max-width: 4.2rem;
+    max-height: 2.3em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .boletim-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .boletim-main {
+    padding: 0.75rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1023px) {
+  .boletim-info-grid {
+    grid-template-columns: 1fr 180px;
+  }
+}
+
+/* Desktop: menu completo sempre visível */
+@media (min-width: 1024px) {
+  .boletim-menu-toggle {
+    display: none !important;
+  }
+
+  .boletim-topbar-head {
+    flex: 0 1 auto;
+  }
+
+  .boletim-icon-menu {
+    display: flex !important;
+  }
+
+  .boletim-info-grid {
+    grid-template-columns: 1fr 220px;
+  }
+}
+
+/* Smartphone: ícones ainda mais compactos */
+@media (max-width: 640px) {
+  .boletim-login-shell {
+    padding: 1rem;
+    justify-content: flex-start;
+    padding-top: 12vh;
+  }
+
+  .boletim-login-header h1 {
+    font-size: 1.15rem;
+  }
+
+  .boletim-escola-nome {
+    white-space: nowrap;
+  }
+
+  .boletim-icon-btn {
+    min-width: 2.65rem;
+    min-height: 2.55rem;
+    padding: 0.3rem;
+  }
+
+  .boletim-icon-btn span {
+    display: none;
+  }
+
+  .boletim-section-title {
+    font-size: 1.05rem;
+  }
+
+  .boletim-card th,
+  .boletim-card td {
+    padding: 0.35rem 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .boletim-card th {
+    width: 36%;
+    white-space: normal;
+  }
+
+  .boletim-tab {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  .boletim-grades {
+    min-width: 560px;
+    font-size: 0.75rem;
+  }
+
+  .boletim-scroll-hint {
+    display: block;
+  }
+
+  .boletim-list-item {
+    padding: 0.75rem;
+  }
+}
+
+/* Assistente WhatsApp (FAB + chat) */
+.wa-widget {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.wa-fab {
+  width: 3.6rem;
+  height: 3.6rem;
+  border: none;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(18, 140, 70, 0.45);
+  display: grid;
+  place-items: center;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.wa-fab:hover {
+  transform: scale(1.06);
+  filter: brightness(1.05);
+}
+
+.wa-panel {
+  width: min(92vw, 360px);
+  height: min(70vh, 520px);
+  background: #efeae2;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+  display: flex;
+  flex-direction: column;
+}
+
+.wa-panel.hidden {
+  display: none;
+}
+
+.wa-panel-header {
+  background: #075e54;
+  color: #fff;
+  padding: 0.75rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.wa-panel-avatar {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: #25d366;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.wa-panel-title {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.wa-panel-title strong {
+  font-size: 0.95rem;
+}
+
+.wa-panel-title span {
+  font-size: 0.72rem;
+  opacity: 0.85;
+}
+
+.wa-close {
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+
+.wa-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.35), transparent 40%),
+    #efeae2;
+}
+
+.wa-bubble {
+  max-width: 85%;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.65rem;
+  font-size: 0.88rem;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  word-break: break-word;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+}
+
+.wa-bubble.bot {
+  align-self: flex-start;
+  background: #fff;
+  color: #1a2b3c;
+  border-top-left-radius: 0.15rem;
+}
+
+.wa-bubble.you {
+  align-self: flex-end;
+  background: #d9fdd3;
+  color: #1a2b3c;
+  border-top-right-radius: 0.15rem;
+}
+
+.wa-bubble.typing {
+  opacity: 0.75;
+  font-style: italic;
+}
+
+.wa-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.45rem 0.65rem;
+  background: #f0f2f5;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.wa-quick button {
+  border: 1px solid #25d366;
+  background: #fff;
+  color: #128c7e;
+  border-radius: 999px;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.wa-form {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.55rem 0.65rem;
+  background: #f0f2f5;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.wa-form input {
+  flex: 1;
+  border: none;
+  border-radius: 999px;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.9rem;
+  outline: none;
+  background: #fff;
+}
+
+.wa-form button {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .wa-widget {
+    right: 0.75rem;
+    bottom: 0.75rem;
+  }
+
+  .wa-panel {
+    width: min(96vw, 360px);
+    height: min(72vh, 480px);
+  }
+
+  .wa-fab {
+    width: 3.25rem;
+    height: 3.25rem;
+  }
+}

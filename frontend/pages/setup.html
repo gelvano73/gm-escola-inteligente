@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuração inicial | Escola</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <div class="panel w-full max-w-xl p-6 md:p-8 slide-up">
+    <p class="text-sm font-semibold uppercase tracking-wide text-[var(--sea)]">Assistente de configuração</p>
+    <h1 class="font-display text-3xl mt-1">Personalize sua escola</h1>
+    <p class="mt-2 text-[rgba(11,31,42,0.65)]" id="step-label">Passo 1 de 5 — Nome da escola</p>
+    <div class="mt-3 h-2 rounded-full bg-[rgba(11,31,42,0.08)] overflow-hidden">
+      <div id="progress" class="h-full bg-[var(--sea)] transition-all" style="width:20%"></div>
+    </div>
+
+    <div id="step-content" class="mt-6 space-y-3"></div>
+    <p id="erro" class="text-sm text-red-700 hidden mt-3"></p>
+    <div class="mt-6 flex justify-between gap-2">
+      <button type="button" class="btn-ghost" id="btn-prev">Voltar</button>
+      <button type="button" class="btn-primary" id="btn-next">Continuar</button>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    const state = {
+      step: 1,
+      nome: "",
+      slogan: "",
+      cor_primaria: "#0f6e7c",
+      cor_secundaria: "#0a4f59",
+      cor_botoes: "#0f6e7c",
+      cor_menu: "#0b1f2a",
+      tema: "claro",
+      admin_nome: "",
+      admin_email: "",
+      admin_username: "admin",
+      admin_password: "",
+      logoUploaded: false,
+    };
+
+    const labels = {
+      1: "Passo 1 de 5 — Nome da escola",
+      2: "Passo 2 de 5 — Upload da logomarca",
+      3: "Passo 3 de 5 — Slogan",
+      4: "Passo 4 de 5 — Cores da instituição",
+      5: "Passo 5 de 5 — Criar usuário administrador",
+    };
+
+    async function boot() {
+      const status = await GMApi.api("/escola/status", { auth: false });
+      if (!status.needs_setup) {
+        window.location.href = "/";
+        return;
+      }
+      render();
+    }
+
+    function render() {
+      document.getElementById("step-label").textContent = labels[state.step];
+      document.getElementById("progress").style.width = `${state.step * 20}%`;
+      document.getElementById("btn-prev").disabled = state.step === 1;
+      document.getElementById("btn-next").textContent = state.step === 5 ? "Concluir" : "Continuar";
+      const box = document.getElementById("step-content");
+      if (state.step === 1) {
+        box.innerHTML = `<input class="input-field" id="nome" value="${state.nome}" placeholder="Nome da escola" required />`;
+      } else if (state.step === 2) {
+        box.innerHTML = `
+          <p class="text-sm text-[rgba(11,31,42,0.65)]">Envie PNG/JPG até 3MB (opcional neste passo).</p>
+          <input class="input-field" id="logo" type="file" accept="image/*" />
+          <p class="text-sm" id="logo-status">${state.logoUploaded ? "Logo enviada." : ""}</p>`;
+      } else if (state.step === 3) {
+        box.innerHTML = `<input class="input-field" id="slogan" value="${state.slogan}" placeholder='Ex.: Educação que transforma vidas' />`;
+      } else if (state.step === 4) {
+        box.innerHTML = `
+          <label class="text-sm font-semibold">Cor principal</label>
+          <input class="input-field" id="cor_primaria" type="color" value="${state.cor_primaria}" />
+          <label class="text-sm font-semibold">Cor secundária</label>
+          <input class="input-field" id="cor_secundaria" type="color" value="${state.cor_secundaria}" />
+          <label class="text-sm font-semibold">Cor dos botões</label>
+          <input class="input-field" id="cor_botoes" type="color" value="${state.cor_botoes}" />
+          <label class="text-sm font-semibold">Cor do menu</label>
+          <input class="input-field" id="cor_menu" type="color" value="${state.cor_menu}" />
+          <select class="input-field" id="tema">
+            <option value="claro" ${state.tema === "claro" ? "selected" : ""}>Tema claro</option>
+            <option value="escuro" ${state.tema === "escuro" ? "selected" : ""}>Tema escuro</option>
+          </select>`;
+      } else {
+        box.innerHTML = `
+          <input class="input-field" id="admin_nome" value="${state.admin_nome}" placeholder="Nome do administrador" />
+          <input class="input-field" id="admin_email" type="email" value="${state.admin_email}" placeholder="E-mail" />
+          <input class="input-field" id="admin_username" value="${state.admin_username}" placeholder="Usuário" />
+          <input class="input-field" id="admin_password" type="password" value="${state.admin_password}" placeholder="Senha (mín. 6)" />`;
+      }
+    }
+
+    function collect() {
+      if (state.step === 1) state.nome = document.getElementById("nome").value.trim();
+      if (state.step === 3) state.slogan = document.getElementById("slogan").value.trim();
+      if (state.step === 4) {
+        state.cor_primaria = document.getElementById("cor_primaria").value;
+        state.cor_secundaria = document.getElementById("cor_secundaria").value;
+        state.cor_botoes = document.getElementById("cor_botoes").value;
+        state.cor_menu = document.getElementById("cor_menu").value;
+        state.tema = document.getElementById("tema").value;
+      }
+      if (state.step === 5) {
+        state.admin_nome = document.getElementById("admin_nome").value.trim();
+        state.admin_email = document.getElementById("admin_email").value.trim();
+        state.admin_username = document.getElementById("admin_username").value.trim();
+        state.admin_password = document.getElementById("admin_password").value;
+      }
+    }
+
+    document.getElementById("btn-prev").onclick = () => {
+      collect();
+      state.step = Math.max(1, state.step - 1);
+      render();
+    };
+
+    document.getElementById("btn-next").onclick = async () => {
+      const erro = document.getElementById("erro");
+      erro.classList.add("hidden");
+      collect();
+      try {
+        if (state.step === 1 && state.nome.length < 2) throw new Error("Informe o nome da escola");
+        if (state.step === 2) {
+          const file = document.getElementById("logo")?.files?.[0];
+          if (file) {
+            const fd = new FormData();
+            fd.append("file", file);
+            const res = await fetch(`${GMApi.API_BASE}/escola/setup/logo`, { method: "POST", body: fd });
+            if (!res.ok) throw new Error("Falha no upload da logo");
+            state.logoUploaded = true;
+          }
+        }
+        if (state.step === 5) {
+          if (!state.admin_nome || !state.admin_email || !state.admin_username || state.admin_password.length < 6) {
+            throw new Error("Preencha os dados do administrador");
+          }
+          await GMApi.api("/escola/setup", {
+            method: "POST",
+            auth: false,
+            body: {
+              nome: state.nome,
+              slogan: state.slogan,
+              cor_primaria: state.cor_primaria,
+              cor_secundaria: state.cor_secundaria,
+              cor_botoes: state.cor_botoes,
+              cor_menu: state.cor_menu,
+              tema: state.tema,
+              admin_nome: state.admin_nome,
+              admin_email: state.admin_email,
+              admin_username: state.admin_username,
+              admin_password: state.admin_password,
+            },
+          });
+          window.location.href = "/";
+          return;
+        }
+        state.step += 1;
+        render();
+      } catch (err) {
+        erro.textContent = err.message;
+        erro.classList.remove("hidden");
+      }
+    };
+
+    boot();
+  </script>
+</body>
+</html>

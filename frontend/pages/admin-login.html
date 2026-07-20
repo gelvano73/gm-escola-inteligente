@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel | Acesso da equipe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <main class="panel w-full max-w-md p-7 md:p-8 fade-in">
+    <div id="login-brand" class="mb-5 flex flex-col items-center gap-3 text-center"></div>
+    <h1 class="font-display text-2xl text-center mb-1">Acesso da equipe</h1>
+    <p class="text-center text-sm text-[rgba(11,31,42,0.65)] mb-5">Administradores e professores</p>
+
+    <form id="login-form" class="space-y-4">
+      <div>
+        <label class="block text-sm font-semibold mb-1.5" for="usuario">Usuário ou e-mail</label>
+        <input class="input-field" id="usuario" type="text" required autocomplete="username" />
+      </div>
+      <div>
+        <label class="block text-sm font-semibold mb-1.5" for="password">Senha</label>
+        <div class="password-field">
+          <input class="input-field" id="password" type="password" required autocomplete="current-password" />
+          <button type="button" class="password-toggle" id="toggle-pass" aria-label="Mostrar senha">
+            <svg class="icon-eye" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="icon-eye-off hidden" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+          </button>
+        </div>
+      </div>
+      <p id="login-error" class="text-sm text-red-700 hidden"></p>
+      <button class="btn-primary w-full" type="submit">Entrar no painel</button>
+    </form>
+
+    <p class="mt-4 text-sm text-[rgba(11,31,42,0.65)]">
+      Esqueceu a senha? Contate a administração para gerar uma nova senha provisória.
+    </p>
+    <p class="mt-3 text-center text-sm">
+      <a class="text-[var(--sea)] font-semibold" href="/">Área do aluno (boletim)</a>
+    </p>
+    <div id="demo-accounts" class="mt-5 pt-4 border-t border-[var(--line)] text-sm text-[rgba(11,31,42,0.7)] space-y-1 hidden">
+      <p class="font-semibold text-[var(--ink)]">Contas de demonstração</p>
+      <p>Admin: admin / 123456</p>
+      <p>Professor: professor / prof123</p>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/branding.js"></script>
+  <script>
+    (async () => {
+      const status = await Branding.load();
+      if (status.needs_setup) {
+        window.location.href = "/pages/setup.html";
+        return;
+      }
+      const e = Branding.escola || { nome: "Escola", slogan: "" };
+      document.title = `Painel | ${e.nome}`;
+      document.getElementById("login-brand").innerHTML = `
+        ${Branding.logoHtml("4rem")}
+        <div>
+          <p class="font-display text-xl">${e.nome}</p>
+          <p class="text-sm text-[rgba(11,31,42,0.65)]">${e.slogan || "Portal acadêmico"}</p>
+        </div>
+      `;
+      if ((e.nome || "").includes("G&M")) {
+        document.getElementById("demo-accounts").classList.remove("hidden");
+      }
+      if (Auth.getToken()) {
+        const me = Auth.getUser();
+        if (me) {
+          if (me.perfil === "aluno") {
+            window.location.href = Auth.homeFor(me);
+            return;
+          }
+          window.location.href = Auth.homeFor(me);
+        }
+      }
+    })();
+
+    document.getElementById("toggle-pass").onclick = () => {
+      const input = document.getElementById("password");
+      const btn = document.getElementById("toggle-pass");
+      const showing = input.type === "text";
+      input.type = showing ? "password" : "text";
+      btn.querySelector(".icon-eye").classList.toggle("hidden", !showing);
+      btn.querySelector(".icon-eye-off").classList.toggle("hidden", showing);
+    };
+
+    document.getElementById("login-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const errorEl = document.getElementById("login-error");
+      errorEl.classList.add("hidden");
+      try {
+        const me = await Auth.login(
+          document.getElementById("usuario").value.trim(),
+          document.getElementById("password").value
+        );
+        if (me.perfil === "aluno") {
+          Auth.clear();
+          errorEl.textContent = "Conta de aluno. Use a área do boletim: /";
+          errorEl.classList.remove("hidden");
+          return;
+        }
+        window.location.href = Auth.homeFor(me);
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.remove("hidden");
+      }
+    });
+  </script>
+</body>
+</html>

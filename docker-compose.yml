@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: escola_inteligente
+      POSTGRES_USER: escola
+      POSTGRES_PASSWORD: escola123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://escola:escola123@db:5432/escola_inteligente
+      SECRET_KEY: gm-escola-inteligente-prod-change-me
+      ACCESS_TOKEN_EXPIRE_MINUTES: 480
+      CORS_ORIGINS: "*"
+    depends_on:
+      - db
+    volumes:
+      - ./frontend:/app/frontend:ro
+
+volumes:
+  pgdata:

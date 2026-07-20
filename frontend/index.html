@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boletim Escolar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/boletim.css" />
+</head>
+<body class="boletim-login-body">
+  <main class="boletim-login-shell">
+    <div class="boletim-login-card fade-in">
+      <header class="boletim-login-header">
+        <div id="login-logo" class="boletim-login-logo" aria-hidden="true"></div>
+        <h1>Boletim Escolar</h1>
+      </header>
+
+      <form id="login-form" class="boletim-login-form" autocomplete="on">
+        <div class="boletim-field">
+          <span class="boletim-field-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#1e5a8a" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M5 19c1.5-3.5 4-5 7-5s5.5 1.5 7 5"/></svg>
+          </span>
+          <input id="usuario" name="usuario" type="text" placeholder="Matrícula" required autocomplete="username" />
+        </div>
+        <div class="boletim-field">
+          <span class="boletim-field-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="#e8b923" stroke="#c49a12" stroke-width="1"><rect x="6" y="11" width="12" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="#c49a12" stroke-width="1.8"/></svg>
+          </span>
+          <input id="password" name="password" type="password" placeholder="Senha" required autocomplete="current-password" />
+        </div>
+        <div class="boletim-captcha">
+          <label for="captcha">Digite os caracteres:</label>
+          <div class="boletim-captcha-row">
+            <input id="captcha" type="text" maxlength="6" required autocomplete="off" />
+            <button type="button" id="captcha-box" class="boletim-captcha-code" title="Clique para atualizar"></button>
+          </div>
+        </div>
+        <p id="login-error" class="boletim-error hidden"></p>
+        <button class="boletim-btn-entrar" type="submit">
+          <span class="boletim-btn-arrow" aria-hidden="true">→</span>
+          Entrar
+        </button>
+      </form>
+
+      <footer class="boletim-login-footer">
+        <p class="boletim-forgot">Esqueceu a senha? Entre em contato com a administração da escola para receber uma nova senha provisória.</p>
+        <a href="/pages/change-password.html" id="link-alterar-senha">Alterar senha</a>
+      </footer>
+    </div>
+
+    <p class="boletim-staff-link">
+      <a href="/admin">Acesso da equipe (admin / professor)</a>
+    </p>
+    <div id="demo-accounts" class="boletim-demo hidden">
+      <p><strong>Demo aluno:</strong> A2026001 / 12052011</p>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/branding.js"></script>
+  <script>
+    let captchaCode = "";
+
+    function genCaptcha() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      captchaCode = Array.from({ length: 5 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+      document.getElementById("captcha-box").textContent = captchaCode;
+    }
+
+    (async () => {
+      const status = await Branding.load();
+      if (status.needs_setup) {
+        window.location.href = "/pages/setup.html";
+        return;
+      }
+      const e = Branding.escola || { nome: "Escola" };
+      document.title = `Boletim Escolar | ${e.nome}`;
+      const logo = document.getElementById("login-logo");
+      if (e.logo_url) {
+        logo.innerHTML = `<img src="${e.logo_url}" alt="" />`;
+      } else {
+        logo.innerHTML = `<span>${(e.nome || "E").slice(0, 2).toUpperCase()}</span>`;
+      }
+      if ((e.nome || "").includes("G&M")) {
+        document.getElementById("demo-accounts").classList.remove("hidden");
+      }
+      genCaptcha();
+      if (Auth.getToken()) {
+        const me = Auth.getUser();
+        if (me) {
+          if (me.perfil !== "aluno" && !me.must_change_password && !me.user?.must_change_password) {
+            window.location.href = Auth.homeFor(me);
+            return;
+          }
+          window.location.href = Auth.homeFor(me);
+        }
+      }
+    })();
+
+    document.getElementById("captcha-box").onclick = genCaptcha;
+    document.getElementById("link-alterar-senha").onclick = (ev) => {
+      if (!Auth.getToken()) {
+        ev.preventDefault();
+        document.getElementById("login-error").textContent = "Entre com matrícula e senha atuais primeiro.";
+        document.getElementById("login-error").classList.remove("hidden");
+      }
+    };
+
+    document.getElementById("login-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const errorEl = document.getElementById("login-error");
+      errorEl.classList.add("hidden");
+      const typed = document.getElementById("captcha").value.trim().toUpperCase();
+      if (typed !== captchaCode) {
+        errorEl.textContent = "Caracteres incorretos. Tente novamente.";
+        errorEl.classList.remove("hidden");
+        genCaptcha();
+        return;
+      }
+      try {
+        const me = await Auth.login(
+          document.getElementById("usuario").value.trim(),
+          document.getElementById("password").value
+        );
+        if (me.perfil !== "aluno") {
+          Auth.clear();
+          errorEl.textContent = "Conta da equipe. Use o acesso em /admin";
+          errorEl.classList.remove("hidden");
+          genCaptcha();
+          return;
+        }
+        window.location.href = Auth.homeFor(me);
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.remove("hidden");
+        genCaptcha();
+      }
+    });
+  </script>
+</body>
+</html>
