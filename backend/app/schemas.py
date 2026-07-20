@@ -51,6 +51,12 @@ class UserOut(UserBase):
     criado_em: datetime
 
 
+class SerieCreate(BaseModel):
+    nome: str = Field(min_length=2, max_length=100)
+    segmento: Segmento
+    ordem: int = Field(ge=1, le=99)
+
+
 class SerieOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

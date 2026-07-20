@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session, joinedload
 from app.core.database import get_db
 from app.deps import require_roles
 from app.models import Disciplina, Serie, Turma, User, UserRole
-from app.schemas import DisciplinaCreate, DisciplinaOut, SerieOut, TurmaCreate, TurmaOut
+from app.schemas import DisciplinaCreate, DisciplinaOut, SerieCreate, SerieOut, TurmaCreate, TurmaOut
 
 router = APIRouter(tags=["Acadêmico"])
 
@@ -15,6 +15,21 @@ def listar_series(
     _: User = Depends(require_roles(UserRole.ADMIN, UserRole.PROFESSOR, UserRole.ALUNO)),
 ):
     return db.query(Serie).order_by(Serie.ordem).all()
+
+
+@router.post("/series", response_model=SerieOut, status_code=status.HTTP_201_CREATED)
+def criar_serie(
+    payload: SerieCreate,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_roles(UserRole.ADMIN)),
+):
+    if db.query(Serie).filter(Serie.nome == payload.nome).first():
+        raise HTTPException(status_code=400, detail="Já existe uma série com este nome")
+    serie = Serie(**payload.model_dump())
+    db.add(serie)
+    db.commit()
+    db.refresh(serie)
+    return serie
 
 
 @router.get("/turmas", response_model=list[TurmaOut])

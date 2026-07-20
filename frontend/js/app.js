@@ -15,6 +15,7 @@ const menus = {
     { id: "inicio", label: "Dashboard" },
     { id: "alunos", label: "Alunos" },
     { id: "professores", label: "Professores" },
+    { id: "series", label: "Séries" },
     { id: "turmas", label: "Turmas" },
     { id: "disciplinas", label: "Disciplinas" },
     { id: "notas", label: "Notas" },
@@ -426,13 +427,73 @@ async function viewProfessores() {
     );
   };
 }
+async function viewSeries() {
+  setMeta("Séries", "Cadastro de séries (Fundamental e Médio)");
+  const series = await GMApi.api("/series");
+  const content = document.getElementById("content");
+  const segmentoLabel = {
+    fundamental_1: "Fundamental I",
+    fundamental_2: "Fundamental II",
+    medio: "Ensino Médio",
+  };
+  const canCreate = state.me.perfil === "admin";
+  content.innerHTML = `
+    <div class="flex justify-between items-center gap-3 flex-wrap mb-3">
+      <p class="text-sm text-[rgba(11,31,42,0.65)]">Cadastre a série e depois vincule as turmas (A, B, C…).</p>
+      ${canCreate ? `<button class="btn-primary" id="btn-nova-serie">Nova série</button>` : ""}
+    </div>
+    <div class="panel table-wrap">
+      <table class="data">
+        <thead><tr><th>Ordem</th><th>Nome</th><th>Segmento</th></tr></thead>
+        <tbody>
+          ${series
+            .map(
+              (s) => `<tr>
+              <td>${s.ordem}</td>
+              <td>${s.nome}</td>
+              <td>${segmentoLabel[s.segmento] || s.segmento}</td>
+            </tr>`
+            )
+            .join("") || `<tr><td colspan="3">Nenhuma série cadastrada.</td></tr>`}
+        </tbody>
+      </table>
+    </div>`;
+
+  if (canCreate) {
+    document.getElementById("btn-nova-serie").onclick = () => {
+      openModal(
+        "Nova série",
+        `
+        <input class="input-field" name="nome" placeholder="Ex: 1º Ano Fundamental" required />
+        <select class="input-field" name="segmento" required>
+          <option value="fundamental_1">Fundamental I (1º–5º)</option>
+          <option value="fundamental_2">Fundamental II (6º–9º)</option>
+          <option value="medio">Ensino Médio</option>
+        </select>
+        <input class="input-field" name="ordem" type="number" min="1" max="99" placeholder="Ordem (ex: 1)" required />
+        `,
+        async (fd) => {
+          const payload = Object.fromEntries(fd.entries());
+          payload.ordem = Number(payload.ordem);
+          await GMApi.api("/series", { method: "POST", body: payload });
+        }
+      );
+    };
+  }
+}
+
 async function viewTurmas() {
   setMeta("Turmas", state.me.perfil === "admin" ? "Cadastro de turmas" : "Visualização de turmas");
   const [turmas, series] = await Promise.all([GMApi.api("/turmas"), GMApi.api("/series")]);
   const content = document.getElementById("content");
   const canCreate = state.me.perfil === "admin";
   content.innerHTML = `
-    <div class="flex justify-end">${canCreate ? `<button class="btn-primary" id="btn-nova-turma">Nova turma</button>` : ""}</div>
+    <div class="flex justify-between items-center gap-3 flex-wrap mb-3">
+      <p class="text-sm text-[rgba(11,31,42,0.65)]">
+        ${series.length ? "Selecione a série e informe a turma (A, B…)." : "Cadastre uma série em <strong>Séries</strong> antes de criar turmas."}
+      </p>
+      ${canCreate ? `<button class="btn-primary" id="btn-nova-turma" ${series.length ? "" : "disabled"}>Nova turma</button>` : ""}
+    </div>
     <div class="panel table-wrap">
       <table class="data">
         <thead><tr><th>Série</th><th>Turma</th><th>Ano</th><th>Turno</th></tr></thead>
@@ -446,35 +507,39 @@ async function viewTurmas() {
               <td>${t.turno}</td>
             </tr>`
             )
-            .join("")}
+            .join("") || `<tr><td colspan="4">Nenhuma turma cadastrada.</td></tr>`}
         </tbody>
       </table>
     </div>`;
 
   if (canCreate) {
-    document.getElementById("btn-nova-turma").onclick = () => {
-      openModal(
-        "Nova turma",
-        `
-        <select class="input-field" name="serie_id" required>
-          ${series.map((s) => `<option value="${s.id}">${s.nome}</option>`).join("")}
-        </select>
-        <input class="input-field" name="nome" placeholder="Turma (ex: A)" required />
-        <input class="input-field" name="ano_letivo" type="number" value="2026" required />
-        <select class="input-field" name="turno">
-          <option value="manhã">Manhã</option>
-          <option value="tarde">Tarde</option>
-          <option value="noite">Noite</option>
-        </select>
-        `,
-        async (fd) => {
-          const payload = Object.fromEntries(fd.entries());
-          payload.serie_id = Number(payload.serie_id);
-          payload.ano_letivo = Number(payload.ano_letivo);
-          await GMApi.api("/turmas", { method: "POST", body: payload });
-        }
-      );
-    };
+    const btn = document.getElementById("btn-nova-turma");
+    if (btn && !btn.disabled) {
+      btn.onclick = () => {
+        openModal(
+          "Nova turma",
+          `
+          <label class="text-sm font-semibold">Série</label>
+          <select class="input-field" name="serie_id" required>
+            ${series.map((s) => `<option value="${s.id}">${s.nome}</option>`).join("")}
+          </select>
+          <input class="input-field" name="nome" placeholder="Turma (ex: A)" required />
+          <input class="input-field" name="ano_letivo" type="number" value="${new Date().getFullYear()}" required />
+          <select class="input-field" name="turno">
+            <option value="manhã">Manhã</option>
+            <option value="tarde">Tarde</option>
+            <option value="noite">Noite</option>
+          </select>
+          `,
+          async (fd) => {
+            const payload = Object.fromEntries(fd.entries());
+            payload.serie_id = Number(payload.serie_id);
+            payload.ano_letivo = Number(payload.ano_letivo);
+            await GMApi.api("/turmas", { method: "POST", body: payload });
+          }
+        );
+      };
+    }
   }
 }
 
@@ -930,6 +995,7 @@ const views = {
   perfil: viewPerfil,
   alunos: viewAlunos,
   professores: viewProfessores,
+  series: viewSeries,
   turmas: viewTurmas,
   disciplinas: viewDisciplinas,
   notas: viewNotas,
