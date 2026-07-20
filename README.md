@@ -4,7 +4,15 @@ Sistema escolar completo para gestão acadêmica do **1º Ano do Ensino Fundamen
 
 ## Demo online
 
-Quando o deploy estiver ativo, use o link público do serviço (Railway/Render). Contas demo:
+**URL pública:** https://web-production-6127a.up.railway.app
+
+| Área | Link |
+|------|------|
+| Alunos (boletim) | https://web-production-6127a.up.railway.app/ |
+| Equipe (admin/professor) | https://web-production-6127a.up.railway.app/admin |
+| API docs | https://web-production-6127a.up.railway.app/docs |
+
+Contas demo:
 
 | Perfil | Login | Senha |
 |--------|-------|-------|
@@ -12,10 +20,9 @@ Quando o deploy estiver ativo, use o link público do serviço (Railway/Render).
 | Professor | `professor` | `prof123` |
 | Aluno | `A2026001` | `12052011` |
 
-- Alunos: `/` ou `/boletim`
-- Equipe: `/admin`
+> No 1º acesso o sistema pede troca de senha. Em planos gratuitos o app pode “dormir” após inatividade e demorar ~30s para acordar.
 
-> No 1º acesso o sistema pede troca de senha.
+Código no GitHub: https://github.com/gelvano73/gm-escola-inteligente
 
 ## Como testar localmente
 
