@@ -31,21 +31,21 @@
           </button>
         </div>
       </div>
-      <label class="flex items-start gap-2 text-sm text-[rgba(11,31,42,0.8)]">
-        <input type="checkbox" id="aceite-termos" required class="mt-1" />
-        <span>
-          Li e aceito os
-          <a class="text-[var(--sea)] font-semibold" href="/pages/termos.html" target="_blank" rel="noopener">Termos de Uso</a>.
-        </span>
-      </label>
-      <label class="flex items-start gap-2 text-sm text-[rgba(11,31,42,0.8)]">
-        <input type="checkbox" id="aceite-privacidade" required class="mt-1" />
-        <span>
-          Li e aceito a
-          <a class="text-[var(--sea)] font-semibold" href="/pages/privacidade.html" target="_blank" rel="noopener">Política de Privacidade (LGPD)</a>
-          e me comprometo a tratar dados escolares com confidencialidade.
-        </span>
-      </label>
+      <label class="lgpd-check">
+    <input type="checkbox" id="aceite-termos" required />
+    <span>
+      Li e aceito os
+      <a class="text-[var(--sea)] font-semibold" href="/pages/termos.html" target="_blank" rel="noopener">Termos de Uso</a>.
+    </span>
+  </label>
+  <label class="lgpd-check">
+    <input type="checkbox" id="aceite-privacidade" required />
+    <span>
+      Li e aceito a
+      <a class="text-[var(--sea)] font-semibold" href="/pages/privacidade.html" target="_blank" rel="noopener">Política de Privacidade (LGPD)</a>
+      e me comprometo a tratar dados escolares com confidencialidade.
+    </span>
+  </label>
       <p id="login-error" class="text-sm text-red-700 hidden"></p>
       <button class="btn-primary w-full" type="submit">Entrar no painel</button>
     </form>

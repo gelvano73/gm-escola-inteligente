@@ -77,25 +77,35 @@ if FRONTEND_DIR.exists():
     app.mount("/css", StaticFiles(directory=FRONTEND_DIR / "css"), name="css")
     app.mount("/js", StaticFiles(directory=FRONTEND_DIR / "js"), name="js")
 
+    def _html(path: Path):
+        return FileResponse(
+            path,
+            headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0",
+            },
+        )
+
     @app.get("/")
     def index():
-        return FileResponse(FRONTEND_DIR / "index.html")
+        return _html(FRONTEND_DIR / "index.html")
 
     @app.get("/boletim")
     def boletim_login():
-        return FileResponse(FRONTEND_DIR / "index.html")
+        return _html(FRONTEND_DIR / "index.html")
 
     @app.get("/admin")
     def admin_login():
-        return FileResponse(FRONTEND_DIR / "pages" / "admin-login.html")
+        return _html(FRONTEND_DIR / "pages" / "admin-login.html")
 
     @app.get("/equipe")
     def equipe_login():
-        return FileResponse(FRONTEND_DIR / "pages" / "admin-login.html")
+        return _html(FRONTEND_DIR / "pages" / "admin-login.html")
 
     @app.get("/pages/{page_name}")
     def serve_page(page_name: str):
         target = FRONTEND_DIR / "pages" / page_name
         if not target.exists() or not target.is_file():
             raise HTTPException(status_code=404, detail="Página não encontrada")
-        return FileResponse(target)
+        return _html(target)

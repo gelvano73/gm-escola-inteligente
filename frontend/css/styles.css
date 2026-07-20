@@ -562,3 +562,31 @@ body.theme-dark .panel {
   font-weight: 600;
   text-decoration: underline;
 }
+
+.lgpd-check {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin: 0.15rem 0;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--line, #d5e0e4);
+  border-radius: 12px;
+  background: rgba(15, 110, 124, 0.06);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: rgba(11, 31, 42, 0.88);
+  cursor: pointer;
+}
+
+.lgpd-check input[type="checkbox"] {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+  accent-color: #0f6e7c;
+  cursor: pointer;
+}
+
+.lgpd-check a {
+  text-decoration: underline;
+}
