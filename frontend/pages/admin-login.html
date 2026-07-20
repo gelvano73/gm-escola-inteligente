@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/styles.css?v=20260720b" />
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
   <main class="panel w-full max-w-md p-7 md:p-8 fade-in">
@@ -31,21 +31,25 @@
           </button>
         </div>
       </div>
-      <label class="lgpd-check">
-    <input type="checkbox" id="aceite-termos" required />
-    <span>
-      Li e aceito os
-      <a class="text-[var(--sea)] font-semibold" href="/pages/termos.html" target="_blank" rel="noopener">Termos de Uso</a>.
-    </span>
-  </label>
-  <label class="lgpd-check">
-    <input type="checkbox" id="aceite-privacidade" required />
-    <span>
-      Li e aceito a
-      <a class="text-[var(--sea)] font-semibold" href="/pages/privacidade.html" target="_blank" rel="noopener">Política de Privacidade (LGPD)</a>
-      e me comprometo a tratar dados escolares com confidencialidade.
-    </span>
-  </label>
+
+      <div class="lgpd-checks">
+        <label class="lgpd-check">
+          <input type="checkbox" id="aceite-termos" required />
+          <span>
+            Li e aceito os
+            <a href="/pages/termos.html" target="_blank" rel="noopener">Termos de Uso</a>.
+          </span>
+        </label>
+        <label class="lgpd-check">
+          <input type="checkbox" id="aceite-privacidade" required />
+          <span>
+            Li e aceito a
+            <a href="/pages/privacidade.html" target="_blank" rel="noopener">Política de Privacidade (LGPD)</a>
+            e me comprometo a tratar dados escolares com confidencialidade.
+          </span>
+        </label>
+      </div>
+
       <p id="login-error" class="text-sm text-red-700 hidden"></p>
       <button class="btn-primary w-full" type="submit">Entrar no painel</button>
     </form>
@@ -68,33 +72,45 @@
     </div>
   </main>
 
-  <script src="/js/api.js"></script>
-  <script src="/js/auth.js"></script>
-  <script src="/js/branding.js"></script>
+  <script src="/js/api.js?v=20260720b"></script>
+  <script src="/js/auth.js?v=20260720b"></script>
+  <script src="/js/branding.js?v=20260720b"></script>
   <script>
+    function showLoginError(msg) {
+      const errorEl = document.getElementById("login-error");
+      errorEl.textContent = msg;
+      errorEl.classList.remove("hidden");
+    }
+
     (async () => {
-      const status = await Branding.load();
-      if (status.needs_setup) {
-        window.location.href = "/pages/setup.html";
-        return;
-      }
-      const e = Branding.escola || { nome: "Escola", slogan: "" };
-      document.title = `Painel | ${e.nome}`;
-      document.getElementById("login-brand").innerHTML = `
-        ${Branding.logoHtml("4rem")}
-        <div>
-          <p class="font-display text-xl">${e.nome}</p>
-          <p class="text-sm text-[rgba(11,31,42,0.65)]">${e.slogan || "Portal acadêmico"}</p>
-        </div>
-      `;
-      if ((e.nome || "").includes("G&M")) {
-        document.getElementById("demo-accounts").classList.remove("hidden");
-      }
-      if (Auth.getToken()) {
-        const me = Auth.getUser();
-        if (me) {
-          window.location.href = Auth.homeFor(me);
+      try {
+        if (typeof Branding === "undefined" || typeof Auth === "undefined") {
+          showLoginError("Falha ao carregar scripts. Atualize a página (Ctrl+F5).");
+          return;
         }
+        const status = await Branding.load();
+        if (status.needs_setup) {
+          window.location.href = "/pages/setup.html";
+          return;
+        }
+        const e = Branding.escola || { nome: "Escola", slogan: "" };
+        document.title = `Painel | ${e.nome}`;
+        document.getElementById("login-brand").innerHTML = `
+          ${Branding.logoHtml("4rem")}
+          <div>
+            <p class="font-display text-xl">${e.nome}</p>
+            <p class="text-sm text-[rgba(11,31,42,0.65)]">${e.slogan || "Portal acadêmico"}</p>
+          </div>
+        `;
+        if ((e.nome || "").includes("G&M")) {
+          document.getElementById("demo-accounts").classList.remove("hidden");
+        }
+        if (Auth.getToken()) {
+          const me = Auth.getUser();
+          if (me) window.location.href = Auth.homeFor(me);
+        }
+      } catch (err) {
+        showLoginError(err.message || "Erro ao iniciar a página");
       }
     })();
 
@@ -111,11 +127,14 @@
       event.preventDefault();
       const errorEl = document.getElementById("login-error");
       errorEl.classList.add("hidden");
+      if (typeof Auth === "undefined" || typeof GMApi === "undefined") {
+        showLoginError("Falha ao carregar scripts. Atualize a página (Ctrl+F5).");
+        return;
+      }
       const aceiteTermos = document.getElementById("aceite-termos").checked;
       const aceitePrivacidade = document.getElementById("aceite-privacidade").checked;
       if (!aceiteTermos || !aceitePrivacidade) {
-        errorEl.textContent = "Aceite os Termos de Uso e a Política de Privacidade (LGPD) para continuar.";
-        errorEl.classList.remove("hidden");
+        showLoginError("Aceite os Termos de Uso e a Política de Privacidade (LGPD) para continuar.");
         return;
       }
       try {
@@ -126,14 +145,12 @@
         );
         if (me.perfil === "aluno") {
           Auth.clear();
-          errorEl.textContent = "Conta de aluno. Use a área do boletim: /";
-          errorEl.classList.remove("hidden");
+          showLoginError("Conta de aluno. Use a área do boletim: /");
           return;
         }
         window.location.href = Auth.homeFor(me);
       } catch (err) {
-        errorEl.textContent = err.message;
-        errorEl.classList.remove("hidden");
+        showLoginError(err.message || "Falha no login");
       }
     });
   </script>

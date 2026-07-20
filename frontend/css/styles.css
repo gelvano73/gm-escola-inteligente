@@ -563,17 +563,27 @@ body.theme-dark .panel {
   text-decoration: underline;
 }
 
+.lgpd-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: 100%;
+}
+
 .lgpd-check {
   display: flex !important;
+  flex-direction: row;
   align-items: flex-start;
   gap: 0.65rem;
-  margin: 0.15rem 0;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
   padding: 0.75rem 0.85rem;
   border: 1px solid var(--line, #d5e0e4);
   border-radius: 12px;
   background: rgba(15, 110, 124, 0.06);
   font-size: 0.9rem;
-  line-height: 1.4;
+  line-height: 1.45;
   color: rgba(11, 31, 42, 0.88);
   cursor: pointer;
 }
@@ -588,5 +598,7 @@ body.theme-dark .panel {
 }
 
 .lgpd-check a {
+  color: var(--sea, #0f6e7c);
+  font-weight: 600;
   text-decoration: underline;
 }
